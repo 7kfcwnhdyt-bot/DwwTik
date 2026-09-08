@@ -243,6 +243,7 @@ async function processVideo() {
     const input = document.getElementById("videoUrl");
     const result = document.getElementById("result");
     const resultText = document.getElementById("resultText");
+  const resultTitle = document.querySelector(".result-title");
     const downloadButton = document.querySelector(".option.primary");
 
     const url = input.value.trim();
@@ -259,12 +260,12 @@ try {
         !parsedUrl.hostname.endsWith(".tiktok.com")
     ) {
         result.style.display = "block";
+      resultTitle.textContent = "Invalid link ✕";
         resultText.textContent = "Please enter a valid TikTok URL.";
         return;
     }
 } catch {
     result.style.display = "block";
-    resultText.textContent = "Please enter a valid TikTok URL.";
     return;
 }
     result.style.display = "block";
@@ -311,7 +312,6 @@ downloadButton.onclick = function () {
   resultText.textContent = "Downloading video...";
     const link = document.createElement("a");link.href = "/api/file?url=" + encodeURIComponent(videoUrl);
     link.download = "DwwTik-video.mp4";
-    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     link.remove();
