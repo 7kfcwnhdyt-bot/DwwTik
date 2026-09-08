@@ -11,7 +11,10 @@ export default {
     }
 
     // Validate TikTok URL
-    if (url.pathname === "/api/validate" && request.method === "POST") {
+    if (
+      url.pathname === "/api/validate" &&
+      request.method === "POST"
+    ) {
       try {
         const body = await request.json();
         const videoUrl = String(body.url || "").trim();
