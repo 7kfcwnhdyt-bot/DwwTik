@@ -292,10 +292,15 @@ async function processVideo() {
         downloadButton.style.opacity = "1";
         downloadButton.style.cursor = "pointer";
 
-        downloadButton.onclick = function () {
-            window.open(videoUrl, "_blank");
-        };
-
+downloadButton.onclick = function () {
+    const link = document.createElement("a");
+    link.href = videoUrl;
+    link.download = "DwwTik-video.mp4";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+};
         if (data.video.cover) {
             const oldPreview = document.getElementById("videoPreview");
 
