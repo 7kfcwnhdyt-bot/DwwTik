@@ -217,7 +217,7 @@
           Your video link is ready to process.
         </div>
 
-        <button class="option primary disabled">
+        <button class="option primary" disabled>
           Download without watermark
         </button>
 
@@ -239,53 +239,89 @@
       <div class="feature">✓ Free</div>
     </div>
 async function processVideo() {
+    const input = document.getElementById("videoUrl");
+    const result = document.getElementById("result");
+    const resultText = document.getElementById("resultText");
+    const downloadButton = document.querySelector(".option.primary");
 
-  const input = document.getElementById("videoUrl");
-  const result = document.getElementById("result");
-  const resultText = document.getElementById("resultText");
+    const url = input.value.trim();
 
-  const url = input.value.trim();
-
-  if (!url) {
-    input.focus();
-    return;
-  }
-
-  result.style.display = "block";
-  resultText.textContent = "Checking your link...";
-
-  try {
-
-    const response = await fetch("/api/validate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        url: url
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.valid) {
-      resultText.textContent = "TikTok link verified ✓";
-    } else {
-      resultText.textContent =
-        "This doesn't appear to be a valid TikTok link.";
+    if (!url) {
+        input.focus();
+        return;
     }
 
-  } catch (error) {
+    result.style.display = "block";
+    resultText.textContent = "Downloading video information...";
+    
+    downloadButton.disabled = true;
+    downloadButton.style.opacity = "0.45";
+    downloadButton.style.cursor = "not-allowed";
 
-    resultText.textContent =
-      "Something went wrong. Please try again.";
+    try {
+        const response = await fetch("/api/download", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url: url
+            })
+        });
 
-  }
+        const data = await response.json();
 
-  result.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
+        if (!response.ok || !data.ok) {
+            resultText.textContent =
+                data.error || "Could not process this TikTok video.";
+            return;
+        }
+
+        const videoUrl = data.video?.hd || data.video?.url;
+
+        if (!videoUrl) {
+            resultText.textContent =
+                "The video was found, but no download link was returned.";
+            return;
+        }
+
+        resultText.textContent = "Video ready ✓";
+
+        downloadButton.disabled = false;
+        downloadButton.style.opacity = "1";
+        downloadButton.style.cursor = "pointer";
+
+        downloadButton.onclick = function () {
+            window.open(videoUrl, "_blank");
+        };
+
+        if (data.video.cover) {
+            const oldPreview = document.getElementById("videoPreview");
+
+            if (oldPreview) {
+                oldPreview.remove();
+            }
+
+            const preview = document.createElement("img");
+            preview.id = "videoPreview";
+            preview.src = data.video.cover;
+            preview.style.width = "100%";
+            preview.style.borderRadius = "12px";
+            preview.style.marginBottom = "18px";
+
+            result.insertBefore(preview, resultText);
+        }
+
+    } catch (error) {
+        console.error(error);
+        resultText.textContent =
+            "Something went wrong. Please try again.";
+    }
+
+    result.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 }
 </script>
 
