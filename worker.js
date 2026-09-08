@@ -171,7 +171,72 @@ export default {
         );
       }
     }
+    // Download video file
+    if (url.pathname === "/api/file" && request.method === "GET") {
+      try {
+        const videoUrl = url.searchParams.get("url");
 
+        if (!videoUrl) {
+          return json(
+            {
+              ok: false,
+              error: "Video URL is required",
+            },
+            400
+          );
+        }
+
+        const target = new URL(videoUrl);
+
+        if (
+          !target.hostname.endsWith(".tiktokcdn.com") &&
+          !target.hostname.endsWith(".tiktokcdn-us.com")
+        ) {
+          return json(
+            {
+              ok: false,
+              error: "Invalid video source",
+            },
+            400
+          );
+        }
+
+        const videoResponse = await fetch(target);
+
+        if (!videoResponse.ok) {
+          return json(
+            {
+              ok: false,
+              error: "Could not download video",
+            },
+            502
+          );
+        }
+
+        const headers = new Headers(corsHeaders);
+        headers.set(
+          "Content-Type",
+          videoResponse.headers.get("Content-Type") || "video/mp4"
+        );
+        headers.set(
+          "Content-Disposition",
+          'attachment; filename="DwwTik-video.mp4"'
+        );
+
+        return new Response(videoResponse.body, {
+          status: 200,
+          headers,
+        });
+      } catch (error) {
+        return json(
+          {
+            ok: false,
+            error: "Could not download video",
+          },
+          500
+        );
+      }
+    }
     return json(
       {
         ok: false,
