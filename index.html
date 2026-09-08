@@ -251,7 +251,22 @@ async function processVideo() {
         input.focus();
         return;
     }
+try {
+    const parsedUrl = new URL(url);
 
+    if (
+        parsedUrl.hostname !== "tiktok.com" &&
+        !parsedUrl.hostname.endsWith(".tiktok.com")
+    ) {
+        result.style.display = "block";
+        resultText.textContent = "Please enter a valid TikTok URL.";
+        return;
+    }
+} catch {
+    result.style.display = "block";
+    resultText.textContent = "Please enter a valid TikTok URL.";
+    return;
+}
     result.style.display = "block";
     resultText.textContent = "Downloading video information...";
     
