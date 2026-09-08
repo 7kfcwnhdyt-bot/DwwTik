@@ -238,38 +238,56 @@
       <div class="feature">✓ Fast</div>
       <div class="feature">✓ Free</div>
     </div>
+async function processVideo() {
 
-    <div class="footer">
-      DwwTik — Video Tools
-    </div>
+  const input = document.getElementById("videoUrl");
+  const result = document.getElementById("result");
+  const resultText = document.getElementById("resultText");
 
-  </main>
+  const url = input.value.trim();
 
-  <script>
-    function processVideo() {
+  if (!url) {
+    input.focus();
+    return;
+  }
 
-      const input = document.getElementById("videoUrl");
-      const result = document.getElementById("result");
-      const resultText = document.getElementById("resultText");
+  result.style.display = "block";
+  resultText.textContent = "Checking your link...";
 
-      const url = input.value.trim();
+  try {
 
-      if (!url) {
-        input.focus();
-        return;
-      }
+    const response = await fetch("/api/validate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url: url
+      })
+    });
 
-      result.style.display = "block";
+    const data = await response.json();
 
+    if (data.valid) {
+      resultText.textContent = "TikTok link verified ✓";
+    } else {
       resultText.textContent =
-        "Video link received: " + url;
-
-      result.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+        "This doesn't appear to be a valid TikTok link.";
     }
-  </script>
+
+  } catch (error) {
+
+    resultText.textContent =
+      "Something went wrong. Please try again.";
+
+  }
+
+  result.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+</script>
 
 </body>
 </html>
