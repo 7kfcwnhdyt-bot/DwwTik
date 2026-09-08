@@ -293,8 +293,7 @@ async function processVideo() {
         downloadButton.style.cursor = "pointer";
 
 downloadButton.onclick = function () {
-    const link = document.createElement("a");
-    link.href = videoUrl;
+    const link = document.createElement("a");link.href = "/api/file?url=" + encodeURIComponent(videoUrl);
     link.download = "DwwTik-video.mp4";
     link.target = "_blank";
     document.body.appendChild(link);
