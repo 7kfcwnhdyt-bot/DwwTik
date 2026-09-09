@@ -164,6 +164,7 @@ url: apiVideoUrl,
           video: {
             url: data.play || null,
             hd: data.hdplay || null,
+            watermark: data.wmplay || null,
             cover: data.cover || null,
             title: data.title || "",
           },
