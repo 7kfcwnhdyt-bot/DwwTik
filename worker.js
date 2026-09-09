@@ -99,7 +99,26 @@ export default {
             400
           );
         }
+let apiVideoUrl = videoUrl;
 
+try {
+    const inputUrl = new URL(videoUrl);
+
+    if (
+        inputUrl.hostname === "vt.tiktok.com" ||
+        inputUrl.hostname === "vm.tiktok.com"
+    ) {
+        const redirectResponse = await fetch(inputUrl, {
+            redirect: "follow",
+        });
+
+        if (redirectResponse.url) {
+            apiVideoUrl = redirectResponse.url;
+        }
+    }
+} catch (error) {
+    // Keep original URL if redirect resolution fails
+}
         // Send URL to TikWM
         const apiResponse = await fetch(
           "https://www.tikwm.com/api/",
@@ -109,7 +128,7 @@ export default {
               "Content-Type": "application/x-www-form-urlencoded",
             },
             body: new URLSearchParams({
-              url: videoUrl,
+url: apiVideoUrl,
               hd: "1",
             }),
           }
