@@ -209,9 +209,11 @@ url: apiVideoUrl,
         const target = new URL(videoUrl);
 
         if (
-          !target.hostname.endsWith(".tiktokcdn.com") &&
-          !target.hostname.endsWith(".tiktokcdn-us.com")
-        ) {
+    !target.hostname.endsWith(".tiktokcdn.com") &&
+    !target.hostname.endsWith(".tiktokcdn-us.com") &&
+    !target.hostname.endsWith(".tikwm.com") &&
+    target.hostname !== "tikwm.com"
+) {
           return json(
             {
               ok: false,
