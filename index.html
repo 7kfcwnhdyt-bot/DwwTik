@@ -1,349 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>DwwTik - Video Tools</title>
+<title>DwwTik — Download Videos</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #08090c;
+    --card: #111318;
+    --border: #242731;
+    --text: #ffffff;
+    --muted: #8d929e;
+    --green: #7cff9b;
+}
+
+body {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(circle at 50% -10%, #18201b 0%, #0b0c10 42%, #08090c 75%);
+    color: var(--text);
+    padding: 24px 18px 50px;
+}
+
+.container {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+/* Header */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 70px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    color: var(--green);
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #9297a2;
+    font-size: 13px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px rgba(124,255,155,.6);
+}
+
+/* Hero */
+
+.hero {
+    text-align: center;
+    margin-bottom: 34px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid #252a31;
+    border-radius: 999px;
+    background: rgba(255,255,255,.025);
+    color: #9ca1ac;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+}
+
+h1 {
+    font-size: clamp(38px, 8vw, 62px);
+    line-height: 1;
+    letter-spacing: -3px;
+    font-weight: 850;
+    margin-bottom: 17px;
+}
+
+h1 span {
+    color: var(--green);
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Platforms */
+
+.platforms {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.platform {
+    flex: 1;
+    height: 45px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #0d0f13;
+    color: #8e939e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.platform.active {
+    color: white;
+    border-color: #4b515d;
+    background: #171a20;
+}
+
+.platform.disabled {
+    opacity: .42;
+    cursor: default;
+}
+
+/* Main card */
+
+.card {
+    background: rgba(17,19,24,.92);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.35);
+}
+
+/* Input */
+
+.input-wrap {
+    position: relative;
+}
+
+.input {
+    width: 100%;
+    height: 58px;
+    border: 1px solid #30343d;
+    border-radius: 14px;
+    background: #0b0d11;
+    color: white;
+    padding: 0 18px;
+    padding-right: 112px;
+    outline: none;
+    font-size: 15px;
+    transition: .2s;
+}
+
+.input:focus {
+    border-color: #666d78;
+}
+
+.input::placeholder {
+    color: #666b76;
+}
+
+.paste-btn {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    height: 44px;
+    padding: 0 15px;
+    border: 0;
+    border-radius: 10px;
+    background: #1a1d23;
+    color: #c8ccd3;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.paste-btn:active {
+    transform: scale(.97);
+}
+
+/* Download button */
+
+.download-btn {
+    width: 100%;
+    height: 58px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 14px;
+    background: white;
+    color: #090a0d;
+    font-size: 16px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.download-btn:hover {
+    transform: translateY(-1px);
+    opacity: .93;
+}
+
+.download-btn:disabled {
+    background: #272a31;
+    color: #686d77;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Result */
+
+.result {
+    display: none;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.result-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.result-text {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.preview {
+    display: none;
+    width: 100%;
+    max-height: 430px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 15px;
+}
+
+/* Download options */
+
+.options {
+    display: none;
+    gap: 9px;
+    margin-top: 15px;
+}
+
+.option-btn {
+    flex: 1;
+    height: 52px;
+    border-radius: 12px;
+    border: 1px solid #30343d;
+    background: #17191f;
+    color: white;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.option-btn.primary {
+    background: white;
+    color: #090a0d;
+    border-color: white;
+}
+
+.option-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+/* Footer */
+
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #555a65;
+    font-size: 12px;
+}
+
+.footer strong {
+    color: #777c86;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
 
     body {
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-      background: #0f0f12;
-      color: white;
-      padding: 30px 20px;
+        padding: 18px 14px 40px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 720px;
-      margin: 0 auto;
-      text-align: center;
-      padding-top: 10vh;
+    .header {
+        margin-bottom: 55px;
     }
 
-    .logo {
-      font-size: 46px;
-      font-weight: 800;
-      letter-spacing: -2px;
-      margin-bottom: 10px;
+    .status {
+        font-size: 11px;
+    }
+
+    h1 {
+        letter-spacing: -2px;
     }
 
     .subtitle {
-      color: #9b9ba3;
-      font-size: 17px;
-      margin-bottom: 35px;
+        font-size: 14px;
     }
 
     .card {
-      background: #19191e;
-      border: 1px solid #292930;
-      border-radius: 22px;
-      padding: 25px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        padding: 16px;
+        border-radius: 18px;
     }
 
-    .input {
-      width: 100%;
-      height: 58px;
-      border: 1px solid #36363e;
-      border-radius: 13px;
-      background: #101014;
-      color: white;
-      padding: 0 18px;
-      font-size: 16px;
-      outline: none;
-      margin-bottom: 14px;
+    .platform {
+        font-size: 12px;
     }
 
-    .input:focus {
-      border-color: #777780;
+    .options {
+        flex-direction: column;
     }
-
-    .download-button {
-      width: 100%;
-      height: 58px;
-      border: none;
-      border-radius: 13px;
-      background: white;
-      color: #111;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .download-button:active {
-      transform: scale(0.99);
-    }
-
-    .result {
-      display: none;
-      margin-top: 22px;
-      padding: 22px;
-      border-radius: 18px;
-      background: #141419;
-      border: 1px solid #303039;
-      text-align: left;
-    }
-
-    .result-title {
-      font-size: 19px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .result-text {
-      color: #9999a2;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 18px;
-      word-break: break-word;
-    }
-
-    .option {
-      width: 100%;
-      height: 52px;
-      border-radius: 11px;
-      border: 1px solid #36363e;
-      background: #202027;
-      color: white;
-      font-size: 15px;
-      font-weight: 600;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    .option.primary {
-      background: white;
-      color: #111;
-      border-color: white;
-    }
-
-    .option.disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .features {
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      margin-top: 25px;
-      color: #8e8e97;
-      font-size: 14px;
-      flex-wrap: wrap;
-    }
-
-    .feature {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .note {
-      margin-top: 25px;
-      color: #66666f;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .footer {
-      margin-top: 30px;
-      color: #777780;
-      font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding-top: 7vh;
-      }
-
-      .logo {
-        font-size: 38px;
-      }
-
-      .subtitle {
-        font-size: 15px;
-      }
-
-      .card {
-        padding: 18px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <main class="container">
+<div class="container">
 
-    <div class="logo">DwwTik</div>
+    <header class="header">
+        <div class="logo">Dww<span>Tik</span></div>
 
-    <div class="subtitle">
-      Simple and fast video tools
+        <div class="status">
+            <div class="status-dot"></div>
+            Online
+        </div>
+    </header>
+
+    <section class="hero">
+
+        <div class="badge">
+            <div class="badge-dot"></div>
+            Fast & simple video downloader
+        </div>
+
+        <h1>Download.<br><span>Without limits.</span></h1>
+
+        <p class="subtitle">
+            Paste a video link and download it in seconds.
+        </p>
+
+    </section>
+
+    <div class="platforms">
+
+        <button class="platform active" type="button">
+            TikTok
+        </button>
+
+        <button class="platform disabled" type="button">
+            Instagram
+        </button>
+
+        <button class="platform disabled" type="button">
+            X
+        </button>
+
     </div>
 
     <section class="card">
 
-      <input
-        id="videoUrl"
-        class="input"
-        type="url"
-        placeholder="Paste your TikTok URL here..."
-      >
+        <div class="input-wrap">
 
-      <button
-        class="download-button"
-        onclick="processVideo()"
-      >
-        Download
-      </button>
+            <input
+                id="urlInput"
+                class="input"
+                type="url"
+                placeholder="Paste TikTok link here..."
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+            >
 
-      <div id="result" class="result">
+            <button
+                id="pasteButton"
+                class="paste-btn"
+                type="button"
+            >
+                Paste
+            </button>
 
-        <div class="result-title">
-        Checking link...
         </div>
 
-        <div id="resultText" class="result-text">
-          Your video link is ready to process.
-        </div>
-
-        <button class="option primary" disabled>
-          Download without watermark
+        <button
+            id="downloadButton"
+            class="download-btn"
+            type="button"
+        >
+            Download video
         </button>
 
-        <button class="option disabled">
-          Download with watermark
-        </button>
+        <div id="result" class="result">
 
-        <div class="note">
-          Download processing will be connected in the next step.
+            <img
+                id="videoPreview"
+                class="preview"
+                alt="Video preview"
+            >
+
+            <div id="resultTitle" class="result-title">
+                Ready
+            </div>
+
+            <div id="resultText" class="result-text">
+                Processing...
+            </div>
+
+            <div id="options" class="options">
+
+                <button
+                    id="noWatermarkButton"
+                    class="option-btn primary"
+                    type="button"
+                >
+                    Download without watermark
+                </button>
+
+                <button
+                    class="option-btn"
+                    type="button"
+                    disabled
+                >
+                    With watermark
+                </button>
+
+            </div>
+
         </div>
-
-      </div>
 
     </section>
 
-    <div class="features">
-      <div class="feature">✓ Simple</div>
-      <div class="feature">✓ Fast</div>
-      <div class="feature">✓ Free</div>
+    <div class="footer">
+        <strong>DwwTik</strong> · Simple. Fast. Clean.
     </div>
-    <script>
-async function processVideo() {
-    const input = document.getElementById("videoUrl");
-    const result = document.getElementById("result");
-    const resultText = document.getElementById("resultText");
-  const resultTitle = document.querySelector(".result-title");
-    const downloadButton = document.querySelector(".option.primary");
 
-    const url = input.value.trim();
+</div>
 
-    if (!url) {
-        input.focus();
-        return;
-    }
-try {
-    const parsedUrl = new URL(url);
+<script>
 
-    if (
-        parsedUrl.hostname !== "tiktok.com" &&
-        !parsedUrl.hostname.endsWith(".tiktok.com")
-    ) {
-        result.style.display = "block";
-      resultTitle.textContent = "Invalid link ✕";
-        resultText.textContent = "Please enter a valid TikTok URL.";
-        return;
-    }
-} catch {
-    result.style.display = "block";
-    return;
-}
-    result.style.display = "block";
-    resultText.textContent = "Downloading video information...";
-    
-    downloadButton.disabled = true;
-    downloadButton.style.opacity = "0.45";
-    downloadButton.style.cursor = "not-allowed";
+const urlInput = document.getElementById("urlInput");
+const pasteButton = document.getElementById("pasteButton");
+const downloadButton = document.getElementById("downloadButton");
+
+const result = document.getElementById("result");
+const resultTitle = document.getElementById("resultTitle");
+const resultText = document.getElementById("resultText");
+
+const videoPreview = document.getElementById("videoPreview");
+const options = document.getElementById("options");
+const noWatermarkButton =
+    document.getElementById("noWatermarkButton");
+
+
+/* Paste */
+
+pasteButton.addEventListener("click", async function () {
 
     try {
+
+        const text = await navigator.clipboard.readText();
+
+        if (!text) {
+            result.style.display = "block";
+            resultTitle.textContent = "Nothing to paste";
+            resultText.textContent = "Copy a TikTok link first.";
+            return;
+        }
+
+        urlInput.value = text;
+
+        result.style.display = "none";
+
+    } catch {
+
+        urlInput.focus();
+
+    }
+
+});
+
+
+/* Download / Process */
+
+downloadButton.addEventListener("click", processVideo);
+
+
+async function processVideo() {
+
+    const url = urlInput.value.trim();
+
+    if (!url) {
+
+        result.style.display = "block";
+        resultTitle.textContent = "Link required";
+        resultText.textContent = "Please paste a TikTok link first.";
+
+        return;
+    }
+
+
+    try {
+
+        const parsedUrl = new URL(url);
+
+        const validTikTok =
+            parsedUrl.hostname === "tiktok.com" ||
+            parsedUrl.hostname.endsWith(".tiktok.com");
+
+        if (!validTikTok) {
+
+            result.style.display = "block";
+            resultTitle.textContent = "Invalid link";
+            resultText.textContent =
+                "Please enter a valid TikTok URL.";
+
+            return;
+        }
+
+    } catch {
+
+        result.style.display = "block";
+        resultTitle.textContent = "Invalid link";
+        resultText.textContent =
+            "Please enter a valid TikTok URL.";
+
+        return;
+    }
+
+
+    result.style.display = "block";
+    options.style.display = "none";
+    videoPreview.style.display = "none";
+
+    resultTitle.textContent = "Checking link...";
+    resultText.textContent = "Please wait a moment.";
+
+    downloadButton.disabled = true;
+
+
+    try {
+
         const response = await fetch("/api/download", {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
                 url: url
             })
+
         });
+
 
         const data = await response.json();
 
+
         if (!response.ok || !data.ok) {
+
+            resultTitle.textContent = "Couldn't process link";
             resultText.textContent =
-                data.error || "Could not process this TikTok video.";
+                data.error ||
+                "Something went wrong. Please try again.";
+
             return;
         }
 
-        const videoUrl = data.video?.hd || data.video?.url;
+
+        const videoUrl =
+            data.video?.hd ||
+            data.video?.url;
+
 
         if (!videoUrl) {
+
+            resultTitle.textContent = "Video not found";
             resultText.textContent =
-                "The video was found, but no download link was returned.";
+                "No downloadable video was returned.";
+
             return;
         }
 
-        resultText.textContent = "Video ready ✓";
 
-        downloadButton.disabled = false;
-        downloadButton.style.opacity = "1";
-        downloadButton.style.cursor = "pointer";
+        /* Preview */
 
-downloadButton.onclick = function () {
-  resultText.textContent = "Downloading video...";
-    const link = document.createElement("a");link.href = "/api/file?url=" + encodeURIComponent(videoUrl);
-    link.download = "DwwTik-video.mp4";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-};
-        if (data.video.cover) {
-            const oldPreview = document.getElementById("videoPreview");
+        if (data.video?.cover) {
 
-            if (oldPreview) {
-                oldPreview.remove();
-            }
+            videoPreview.src = data.video.cover;
+            videoPreview.style.display = "block";
 
-            const preview = document.createElement("img");
-            preview.id = "videoPreview";
-            preview.src = data.video.cover;
-            preview.style.width = "100%";
-            preview.style.borderRadius = "12px";
-            preview.style.marginBottom = "18px";
-
-            result.insertBefore(preview, resultText);
         }
 
-    } catch (error) {
-        console.error(error);
+
+        resultTitle.textContent = "Video ready ✓";
         resultText.textContent =
-            "Something went wrong. Please try again.";
+            data.video?.title ||
+            "Your video is ready to download.";
+
+        options.style.display = "flex";
+
+        downloadButton.disabled = false;
+
+
+        /* Download */
+
+        noWatermarkButton.onclick = function () {
+
+            resultText.textContent =
+                "Preparing your download...";
+
+            const link = document.createElement("a");
+
+            link.href =
+                "/api/file?url=" +
+                encodeURIComponent(videoUrl);
+
+            link.download = "DwwTik-video.mp4";
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            resultText.textContent =
+                "Download started ✓";
+
+        };
+
+
+    } catch (error) {
+
+        resultTitle.textContent = "Connection error";
+        resultText.textContent =
+            "Please check your connection and try again.";
+
     }
 
-    result.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
 }
+
 </script>
 
 </body>
