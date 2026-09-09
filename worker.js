@@ -213,6 +213,8 @@ url: apiVideoUrl,
     !target.hostname.endsWith(".tiktokcdn-us.com") &&
     !target.hostname.endsWith(".tikwm.com") &&
     target.hostname !== "tikwm.com"
+          &&
+!target.hostname.endsWith(".tiktokv.us")
 ) {
           return json(
             {
