@@ -677,9 +677,7 @@ watermarkButton.onclick = function () {
 
     const link = document.createElement("a");
 
-    link.href =
-        "/api/file?url=" +
-        encodeURIComponent(watermarkUrl);
+    link.href = watermarkUrl;
 
     link.download = "DwwTik-video-watermark.mp4";
 
