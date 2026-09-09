@@ -217,7 +217,7 @@ url: apiVideoUrl,
           return json(
             {
               ok: false,
-              error: "Invalid video source",
+error: "Invalid video source: " + target.hostname,
             },
             400
           );
