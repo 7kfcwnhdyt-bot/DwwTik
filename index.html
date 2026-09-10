@@ -539,15 +539,14 @@ async function processVideo() {
         const parsedUrl = new URL(url);
 
         const validTikTok =
-            parsedUrl.hostname === "tiktok.com" ||
-            parsedUrl.hostname.endsWith(".tiktok.com");
+    parsedUrl.hostname === "tiktok.com" ||
+    parsedUrl.hostname.endsWith(".tiktok.com");
 
-        if (!validTikTok) {
+const validInstagram =
+    parsedUrl.hostname === "instagram.com" ||
+    parsedUrl.hostname.endsWith(".instagram.com");
 
-            result.style.display = "block";
-            resultTitle.textContent = "Invalid link";
-            resultText.textContent =
-                "Please enter a valid TikTok URL.";
+if (!validTikTok && !validInstagram) {
 
             return;
         }
