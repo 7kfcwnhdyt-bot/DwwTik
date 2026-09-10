@@ -668,11 +668,7 @@ watermarkButton.onclick = function () {
     resultText.textContent = "Preparing your download...";
 
     const watermarkUrl = data.video?.watermark;
-resultText.textContent =
-    "NO WM:\n" +
-    data.video?.url +
-    "\n\nWM:\n" +
-    watermarkUrl;
+
     if (!watermarkUrl) {
         resultText.textContent =
             "Watermark video is not available.";
@@ -681,7 +677,9 @@ resultText.textContent =
     
     const link = document.createElement("a");
 
-    link.href = watermarkUrl;
+link.href =
+    "/api/file?url=" +
+    encodeURIComponent(watermarkUrl);
 
     link.download = "DwwTik-video-watermark.mp4";
 
