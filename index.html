@@ -380,7 +380,7 @@ h1 span {
             TikTok
         </button>
 
-        <button class="platform" type="button">
+<button id="instagramButton" class="platform" type="button">
             Instagram
         </button>
 
@@ -474,7 +474,7 @@ h1 span {
 const urlInput = document.getElementById("urlInput");
 const pasteButton = document.getElementById("pasteButton");
 const downloadButton = document.getElementById("downloadButton");
-
+const instagramButton = document.getElementById("instagramButton");
 const result = document.getElementById("result");
 const resultTitle = document.getElementById("resultTitle");
 const resultText = document.getElementById("resultText");
@@ -486,7 +486,12 @@ const noWatermarkButton =
     const watermarkButton =
     document.getElementById("watermarkButton");
 let lastRequestAt = 0;
+instagramButton.addEventListener("click", function () {
+    document.querySelector(".platform.active").classList.remove("active");
+    instagramButton.classList.add("active");
 
+    urlInput.placeholder = "Paste Instagram link here...";
+});
 /* Paste */
 
 pasteButton.addEventListener("click", async function () {
