@@ -668,7 +668,11 @@ watermarkButton.onclick = function () {
     resultText.textContent = "Preparing your download...";
 
     const watermarkUrl = data.video?.watermark;
-resultText.textContent = watermarkUrl;
+resultText.textContent =
+    "NO WM:\n" +
+    data.video?.url +
+    "\n\nWM:\n" +
+    watermarkUrl;
     if (!watermarkUrl) {
         resultText.textContent =
             "Watermark video is not available.";
