@@ -83,7 +83,77 @@ export default {
             400
           );
         }
+                // Handle Instagram
+                const isInstagram =
+                    /^https?:\/\/(www\.)?instagram\.com\//i.test(videoUrl);
 
+                if (isInstagram) {
+                    const apiResponse = await fetch(
+                        "https://api.saveapi.org/v1/download?url=" +
+                        encodeURIComponent(videoUrl),
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": `Bearer ${env.SAVEAPI_KEY}`,
+                            },
+                        }
+                    );
+
+                    if (!apiResponse.ok) {
+                        return json(
+                            {
+                                ok: false,
+                                error: "Instagram downloader service unavailable",
+                            },
+                            502
+                        );
+                    }
+
+                    const result = await apiResponse.json();
+
+                    if (
+                        !result.success ||
+                        !result.medias ||
+                        !result.medias.length
+                    ) {
+                        return json(
+                            {
+                                ok: false,
+                                error: "Could not extract Instagram video",
+                            },
+                            422
+                        );
+                    }
+
+                    const media = result.medias.find(
+                        item => item.type === "video"
+                    );
+
+                    if (!media || !media.url) {
+                        return json(
+                            {
+                                ok: false,
+                                error: "Instagram video not found",
+                            },
+                            422
+                        );
+                    }
+
+                    return json({
+                        ok: true,
+                        video: {
+                            url: media.url,
+                            hd: media.url,
+                            watermark: null,
+                            watermarkSize: null,
+                            cover: null,
+                            title: result.meta?.title || "",
+                        },
+                        author: null,
+                        music: null,
+                        id: null,
+                    });
+                }
         // Validate TikTok URL
         const isTikTok =
           /^https?:\/\/(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\//i.test(
