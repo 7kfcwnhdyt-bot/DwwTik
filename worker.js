@@ -113,8 +113,7 @@ export default {
         },
         502
     );
-}
-                    }
+}           
 
                     const result = await apiResponse.json();
 
