@@ -100,13 +100,20 @@ export default {
                     );
 
                     if (!apiResponse.ok) {
-                        return json(
-                            {
-                                ok: false,
-                                error: "Instagram downloader service unavailable",
-                            },
-                            502
-                        );
+    const errorText = await apiResponse.text();
+
+    return json(
+        {
+            ok: false,
+            error:
+                "SaveAPI error " +
+                apiResponse.status +
+                ": " +
+                errorText.slice(0, 300),
+        },
+        502
+    );
+}
                     }
 
                     const result = await apiResponse.json();
