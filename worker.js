@@ -359,7 +359,7 @@ if (!result || result.code !== 0 || !result.data) {
             music: null,
             id: info.data.id || null,
 });
-    }  catch (error) {
+} catch (error) {
     return json(
         {
             ok: false,
@@ -372,7 +372,10 @@ if (!result || result.code !== 0 || !result.data) {
         500
     );
 }
-        const data = result.data;
+}
+
+const data = result.data;
+
 
         return json({
           ok: true,
