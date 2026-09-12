@@ -739,11 +739,14 @@ watermarkButton.onclick = function () {
 
     const watermarkUrl = data.video?.watermark;
 
-    if (!watermarkUrl) {
-        resultText.textContent =
-            "Watermark video is not available.";
-        return;
-    }
+if (!watermarkUrl) {
+    resultText.textContent =
+        "Watermark video is not available.";
+
+    watermarkButton.disabled = false;
+
+    return;
+}
     
     const link = document.createElement("a");
 
