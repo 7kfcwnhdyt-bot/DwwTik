@@ -475,6 +475,7 @@ const urlInput = document.getElementById("urlInput");
 const pasteButton = document.getElementById("pasteButton");
 const downloadButton = document.getElementById("downloadButton");
 const instagramButton = document.getElementById("instagramButton");
+    const tiktokButton = document.getElementById("tiktokButton");
 const result = document.getElementById("result");
 const resultTitle = document.getElementById("resultTitle");
 const resultText = document.getElementById("resultText");
@@ -491,6 +492,19 @@ instagramButton.addEventListener("click", function () {
     instagramButton.classList.add("active");
 
     urlInput.placeholder = "Paste Instagram link here...";
+    
+    watermarkButton.style.display = "none";
+});
+    tiktokButton.addEventListener("click", function () {
+    document
+        .querySelector(".platform.active")
+        .classList.remove("active");
+
+    tiktokButton.classList.add("active");
+
+    urlInput.placeholder = "Paste a TikTok link here...";
+
+    watermarkButton.style.display = "";
 });
 /* Paste */
 
