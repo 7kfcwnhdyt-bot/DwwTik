@@ -621,6 +621,9 @@ lastRequestAt = Date.now();
 
         if (!response.ok || !data.ok) {
 
+downloadButton.disabled = false;
+downloadButton.textContent = "Download video";
+            
     resultTitle.textContent = "Couldn't process link";
 
     const error = data.error || "";
