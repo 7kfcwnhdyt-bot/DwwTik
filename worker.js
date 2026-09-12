@@ -196,192 +196,43 @@ try {
     // Keep original URL if redirect resolution fails
 }
         // Send URL to TikWM
-let result = null;
-
-try {
-    const apiResponse = await fetch(
-        "https://www.tikwm.com/api/",
-        {
+        const apiResponse = await fetch(
+          "https://www.tikwm.com/api/",
+          {
             method: "POST",
             headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded",
+              "Content-Type": "application/x-www-form-urlencoded",
             },
             body: new URLSearchParams({
-                url: apiVideoUrl,
-                hd: "1",
+url: apiVideoUrl,
+              hd: "1",
             }),
-        }
-    );
+          }
+        );
 
-    if (apiResponse.ok) {
-        try {
-            result = await apiResponse.json();
-        } catch (error) {
-            result = null;
-        }
-    }
-} catch (error) {
-    result = null;
-}
-
-
-// TikWM failed → try Yoinku
-if (!result || result.code !== 0 || !result.data) {
-
-    if (!env.YOINKU_API_KEY) {
-        return json(
+        if (!apiResponse.ok) {
+          return json(
             {
-                ok: false,
-                error: "Downloader service unavailable",
+              ok: false,
+              error: "Downloader service unavailable",
             },
             502
-        );
-    }
+          );
+        }
 
-    try {
+        const result = await apiResponse.json();
 
-        // Get available video formats from Yoinku
-        const infoResponse = await fetch(
-            "https://yoinku.com/api/v1/info?url=" +
-                encodeURIComponent(apiVideoUrl),
+        if (result.code !== 0 || !result.data) {
+          return json(
             {
-                method: "GET",
-                headers: {
-                    "x-api-key": env.YOINKU_API_KEY,
-                },
-            }
-        );
-
-        if (!infoResponse.ok) {
-    const errorText = await infoResponse.text();
-
-    return json(
-        {
-            ok: false,
-            error:
-                "Yoinku info error " +
-                infoResponse.status +
-                ": " +
-                errorText.slice(0, 300),
-        },
-        502
-    );
-}
-
-        const info = await infoResponse.json();
-
-        if (
-            !info.ok ||
-            !info.data ||
-            !Array.isArray(info.data.formats)
-        ) {
-            return json(
-                {
-                    ok: false,
-                    error:
-                        info.error?.message ||
-                        "Could not extract video",
-                },
-                422
-            );
-        }
-
-        const videoFormats = info.data.formats
-            .filter(
-                (format) =>
-                    format.kind === "video" &&
-                    format.hasVideo &&
-                    format.hasAudio
-            )
-            .sort(
-                (a, b) =>
-                    (parseInt(b.height) || 0) -
-                    (parseInt(a.height) || 0)
-            );
-
-        const selectedFormat = videoFormats[0];
-
-        if (!selectedFormat) {
-            return json(
-                {
-                    ok: false,
-                    error: "Could not extract video",
-                },
-                422
-            );
-        }
-
-        // Generate a temporary download URL
-        const downloadResponse = await fetch(
-            "https://yoinku.com/api/v1/download?url=" +
-                encodeURIComponent(apiVideoUrl) +
-                "&format=" +
-                encodeURIComponent(selectedFormat.id),
-            {
-                method: "GET",
-                headers: {
-                    "x-api-key": env.YOINKU_API_KEY,
-                },
-            }
-        );
-
-        if (!downloadResponse.ok) {
-            return json(
-                {
-                    ok: false,
-                    error: "Downloader service unavailable",
-                },
-                502
-            );
-        }
-
-        const downloadData =
-            await downloadResponse.json();
-
-        if (!downloadData.ok || !downloadData.url) {
-            return json(
-                {
-                    ok: false,
-                    error:
-                        downloadData.error?.message ||
-                        "Could not create download",
-                },
-                422
-            );
-        }
-
-        return json({
-            ok: true,
-            video: {
-                url: downloadData.url,
-                hd: downloadData.url,
-                watermark: null,
-                watermarkSize: null,
-                cover: info.data.thumbnailUrl || null,
-                title: info.data.title || "",
+              ok: false,
+              error: result.msg || "Could not extract video",
             },
-            author: null,
-            music: null,
-            id: info.data.id || null,
-});
-} catch (error) {
-    return json(
-        {
-            ok: false,
-            error:
-                "Yoinku error: " +
-                (error instanceof Error
-                    ? error.message
-                    : String(error)),
-        },
-        500
-    );
-}
-}
+            422
+          );
+        }
 
-const data = result.data;
-
+        const data = result.data;
 
         return json({
           ok: true,
