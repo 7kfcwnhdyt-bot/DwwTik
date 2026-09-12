@@ -588,7 +588,8 @@ if (!validTikTok && !validInstagram) {
     resultTitle.textContent = "Checking link...";
     resultText.textContent = "Please wait a moment.";
 
-    downloadButton.disabled = true;
+downloadButton.disabled = true;
+downloadButton.textContent = "Checking link...";
 
 
     try {
@@ -697,7 +698,8 @@ lastRequestAt = Date.now();
 
         options.style.display = "flex";
 
-        downloadButton.disabled = false;
+downloadButton.disabled = false;
+downloadButton.textContent = "Download video";
 watermarkButton.disabled = false;
 
         /* Download */
