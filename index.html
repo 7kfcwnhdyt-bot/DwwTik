@@ -620,13 +620,18 @@ lastRequestAt = Date.now();
 
         if (!response.ok || !data.ok) {
 
-            resultTitle.textContent = "Couldn't process link";
-            resultText.textContent =
-                data.error ||
-                "Something went wrong. Please try again.";
+    resultTitle.textContent = "Couldn't process link";
 
-            return;
-        }
+    if (data.error?.includes("Free Api Limit")) {
+        resultText.textContent =
+            "Please wait a moment and try again.";
+    } else {
+        resultText.textContent =
+            "Something went wrong. Please try again.";
+    }
+
+    return;
+}
 
 
         const videoUrl =
