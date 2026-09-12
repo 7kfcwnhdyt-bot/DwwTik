@@ -723,6 +723,9 @@ noWatermarkButton.disabled = true;
             document.body.appendChild(link);
 
             link.click();
+            setTimeout(() => {
+    noWatermarkButton.disabled = false;
+}, 2000);
 
             link.remove();
 
@@ -731,6 +734,7 @@ noWatermarkButton.disabled = true;
 
         };
 watermarkButton.onclick = function () {
+    watermarkButton.disabled = true;
     resultText.textContent = "Preparing your download...";
 
     const watermarkUrl = data.video?.watermark;
@@ -752,6 +756,9 @@ link.href =
     document.body.appendChild(link);
 
     link.click();
+    setTimeout(() => {
+    watermarkButton.disabled = false;
+}, 2000);
 
     link.remove();
 
