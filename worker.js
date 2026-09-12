@@ -358,18 +358,19 @@ if (!result || result.code !== 0 || !result.data) {
             author: null,
             music: null,
             id: info.data.id || null,
-        });
-
-    } catch (error) {
-
-        return json(
-            {
-                ok: false,
-                error: "Something went wrong",
-            },
-            500
-        );
-    }
+});
+    }  catch (error) {
+    return json(
+        {
+            ok: false,
+            error:
+                "Yoinku error: " +
+                (error instanceof Error
+                    ? error.message
+                    : String(error)),
+        },
+        500
+    );
 }
         const data = result.data;
 
