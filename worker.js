@@ -254,14 +254,20 @@ if (!result || result.code !== 0 || !result.data) {
         );
 
         if (!infoResponse.ok) {
-            return json(
-                {
-                    ok: false,
-                    error: "Downloader service unavailable",
-                },
-                502
-            );
-        }
+    const errorText = await infoResponse.text();
+
+    return json(
+        {
+            ok: false,
+            error:
+                "Yoinku info error " +
+                infoResponse.status +
+                ": " +
+                errorText.slice(0, 300),
+        },
+        502
+    );
+}
 
         const info = await infoResponse.json();
 
