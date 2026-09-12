@@ -622,10 +622,41 @@ lastRequestAt = Date.now();
 
     resultTitle.textContent = "Couldn't process link";
 
-    if (data.error?.includes("Free Api Limit")) {
+    const error = data.error || "";
+
+    if (error.includes("Free Api Limit")) {
+
         resultText.textContent =
             "Please wait a moment and try again.";
+
+    } else if (
+        error.includes("video not found") ||
+        error.includes("Video not found") ||
+        error.includes("Could not extract")
+    ) {
+
+        resultText.textContent =
+            "This video couldn't be found or processed.";
+
+    } else if (
+        error.includes("private") ||
+        error.includes("Private")
+    ) {
+
+        resultText.textContent =
+            "This video is private and can't be downloaded.";
+
+    } else if (
+        error.includes("invalid") ||
+        error.includes("Invalid") ||
+        error.includes("parsing")
+    ) {
+
+        resultText.textContent =
+            "Please check the link and try again.";
+
     } else {
+
         resultText.textContent =
             "Something went wrong. Please try again.";
     }
