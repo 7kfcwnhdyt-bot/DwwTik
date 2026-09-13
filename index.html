@@ -387,9 +387,21 @@ h1 span {
         overflow: hidden;
     }
 }
-    @media (hover: none) and (pointer: coarse) {
+.desktop-side-ad {
+    display: none;
+}
+
+@media (min-width: 601px) {
     .desktop-side-ad {
-        display: none !important;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 300px;
+        min-height: 250px;
+        position: absolute;
+        top: 520px;
+        right: 24px;
+        overflow: hidden;
     }
 }
 </style>
