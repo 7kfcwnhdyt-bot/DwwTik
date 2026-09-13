@@ -343,6 +343,21 @@ h1 span {
         flex-direction: column;
     }
 }
+    .mobile-bottom-ad {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .mobile-bottom-ad {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 50px;
+        margin: 32px auto 24px;
+        overflow: hidden;
+    }
+}
 </style>
 </head>
 
@@ -783,6 +798,17 @@ downloadButton.textContent = "Download video";
 }
 
 </script>
-
+    <div class="mobile-bottom-ad">
+<script>
+  atOptions = {
+    'key' : '63af86ae2d47262c503b86bcfaed337c',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/63af86ae2d47262c503b86bcfaed337c/invoke.js"></script>
+</div>
 </body>
 </html>
