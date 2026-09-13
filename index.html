@@ -390,8 +390,39 @@ h1 span {
 .desktop-side-ad {
     display: none;
 }
+.ipad-side-ad {
+    display: none;
+}
 
-@media (min-width: 601px) {
+@media (min-width: 601px) and (max-width: 1199px) {
+    .ipad-side-ad {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 160px;
+        height: 300px;
+        position: fixed;
+        top: 310px;
+        left: 14px;
+        overflow: hidden;
+        z-index: 1000;
+    }
+}
+@media (min-width: 940px) and (max-width: 1100px) {
+    .ipad-side-ad {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 160px;
+        height: 300px;
+        position: fixed;
+        top: 310px;
+        left: calc(50% - 452px);
+        overflow: hidden;
+        z-index: 1000;
+    }
+}
+@media (min-width: 1200px) {
     .desktop-side-ad {
         display: flex !important;
         justify-content: center;
@@ -874,7 +905,18 @@ downloadButton.textContent = "Download video";
     </script>
     <script src="https://www.highrevenueformat.com/24af60b81c61b2fd8bec2884db95c5bb/invoke.js"></script>
 </div>
-
+<div class="ipad-side-ad">
+    <script>
+        atOptions = {
+            'key' : '9f02529fb7f93ee78736cc6fd451601d',
+            'format' : 'iframe',
+            'height' : 300,
+            'width' : 160,
+            'params' : {}
+        };
+    </script>
+    <script src="https://www.highrevenueformat.com/9f02529fb7f93ee78736cc6fd451601d/invoke.js"></script>
+</div>
 <div class="desktop-bottom-ad">
     <script>
         atOptions = {
