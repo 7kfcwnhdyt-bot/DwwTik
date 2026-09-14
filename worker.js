@@ -27,7 +27,9 @@ export default {
       });
     }
 
+    // =========================
     // API health check
+    // =========================
     if (url.pathname === "/api/health") {
       return json({
         ok: true,
@@ -35,7 +37,9 @@ export default {
       });
     }
 
+    // =========================
     // Validate TikTok URL
+    // =========================
     if (
       url.pathname === "/api/validate" &&
       request.method === "POST"
@@ -65,7 +69,10 @@ export default {
       }
     }
 
-    // Download / extract TikTok or Instagram video
+    // =========================
+    // Download / extract
+    // TikTok or Instagram
+    // =========================
     if (
       url.pathname === "/api/download" &&
       request.method === "POST"
@@ -150,6 +157,7 @@ export default {
 
           return json({
             ok: true,
+            type: "video",
             video: {
               url: media.url,
               hd: media.url,
@@ -182,8 +190,10 @@ export default {
           );
         }
 
-        // Send TikTok URL directly to AnyAPI
-        const apiResponse = await fetch(
+        // =========================
+        // TikTok Video
+        // =========================
+        const videoApiResponse = await fetch(
           "https://api.getanyapi.com/v1/run/tiktok.video_download",
           {
             method: "POST",
@@ -197,15 +207,15 @@ export default {
           }
         );
 
-        if (!apiResponse.ok) {
-          const errorText = await apiResponse.text();
+        if (!videoApiResponse.ok) {
+          const errorText = await videoApiResponse.text();
 
           return json(
             {
               ok: false,
               error:
                 "AnyAPI error " +
-                apiResponse.status +
+                videoApiResponse.status +
                 ": " +
                 errorText.slice(0, 300),
             },
@@ -213,50 +223,124 @@ export default {
           );
         }
 
-        const result = await apiResponse.json();
+        const videoResult = await videoApiResponse.json();
 
-        // AnyAPI normalized response
-        const output = result.output || result;
-        const data = output?.data;
+        // AnyAPI supports both direct and normalized envelope
+        const videoOutput =
+          videoResult.output || videoResult;
 
-        // Photo posts / unavailable videos
-        if (!output?.found || !data) {
+        const videoData = videoOutput?.data;
+
+        // =========================
+        // TikTok Video Found
+        // =========================
+        if (
+          videoOutput?.found &&
+          videoData &&
+          videoData.videoUrl
+        ) {
+          return json({
+            ok: true,
+            type: "video",
+
+            video: {
+              url: videoData.videoUrl || null,
+              hd: videoData.videoUrl || null,
+              watermark:
+                videoData.watermarkedUrl || null,
+              watermarkSize: null,
+              cover: videoData.image || null,
+              title: "",
+            },
+
+            author: null,
+            music: null,
+            id: videoData.id || null,
+          });
+        }
+
+        // =========================
+        // TikTok Photos
+        // =========================
+        const photosApiResponse = await fetch(
+          "https://api.getanyapi.com/v1/run/tiktok.photos",
+          {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${env.ANYAPI_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: videoUrl,
+            }),
+          }
+        );
+
+        if (!photosApiResponse.ok) {
+          const errorText = await photosApiResponse.text();
+
           return json(
             {
               ok: false,
               error:
-                "No downloadable video found. TikTok photo posts are not supported yet.",
+                "AnyAPI photos error " +
+                photosApiResponse.status +
+                ": " +
+                errorText.slice(0, 300),
             },
-            422
+            502
           );
         }
 
-        if (!data.videoUrl) {
-          return json(
-            {
-              ok: false,
-              error: "TikTok video URL was not found",
-            },
-            422
-          );
+        const photosResult = await photosApiResponse.json();
+
+        // AnyAPI supports both direct and normalized envelope
+        const photosOutput =
+          photosResult.output || photosResult;
+
+        const photosData = photosOutput?.data;
+
+        // =========================
+        // Photos Found
+        // =========================
+        if (
+          photosOutput?.found &&
+          photosData &&
+          Array.isArray(photosData.images) &&
+          photosData.images.length
+        ) {
+          const photos = photosData.images
+            .filter((item) => item && item.image)
+            .map((item, index) => ({
+              index: index + 1,
+              url: item.image,
+              watermark:
+                item.watermarkedImage || null,
+              width: item.width || null,
+              height: item.height || null,
+            }));
+
+          if (photos.length) {
+            return json({
+              ok: true,
+              type: "photos",
+              photos,
+              id: photosData.id || null,
+            });
+          }
         }
 
-        return json({
-          ok: true,
-
-          video: {
-            url: data.videoUrl || null,
-            hd: data.videoUrl || null,
-            watermark: data.watermarkedUrl || null,
-            watermarkSize: null,
-            cover: data.image || null,
-            title: "",
+        // =========================
+        // Nothing Found
+        // =========================
+        return json(
+          {
+            ok: false,
+            error:
+              "No downloadable video or photos found.",
           },
-
-          author: null,
-          music: null,
-          id: data.id || null,
-        });
+          422
+        );
       } catch (error) {
         return json(
           {
@@ -271,7 +355,10 @@ export default {
     // =========================
     // Download video file
     // =========================
-    if (url.pathname === "/api/file" && request.method === "GET") {
+    if (
+      url.pathname === "/api/file" &&
+      request.method === "GET"
+    ) {
       try {
         const videoUrl = url.searchParams.get("url");
 
@@ -298,7 +385,9 @@ export default {
           return json(
             {
               ok: false,
-              error: "Invalid video source: " + target.hostname,
+              error:
+                "Invalid video source: " +
+                target.hostname,
             },
             400
           );
@@ -320,7 +409,8 @@ export default {
 
         headers.set(
           "Content-Type",
-          videoResponse.headers.get("Content-Type") || "video/mp4"
+          videoResponse.headers.get("Content-Type") ||
+            "video/mp4"
         );
 
         headers.set(
@@ -343,6 +433,88 @@ export default {
       }
     }
 
+    // =========================
+    // Download image file
+    // =========================
+    if (
+      url.pathname === "/api/image" &&
+      request.method === "GET"
+    ) {
+      try {
+        const imageUrl = url.searchParams.get("url");
+
+        if (!imageUrl) {
+          return json(
+            {
+              ok: false,
+              error: "Image URL is required",
+            },
+            400
+          );
+        }
+
+        const target = new URL(imageUrl);
+
+        if (
+          !target.hostname.endsWith(".tiktokcdn.com") &&
+          !target.hostname.endsWith(".tiktokcdn-us.com") &&
+          !target.hostname.endsWith(".tiktokv.us") &&
+          !target.hostname.endsWith(".tiktokv.com")
+        ) {
+          return json(
+            {
+              ok: false,
+              error:
+                "Invalid image source: " +
+                target.hostname,
+            },
+            400
+          );
+        }
+
+        const imageResponse = await fetch(target);
+
+        if (!imageResponse.ok) {
+          return json(
+            {
+              ok: false,
+              error: "Could not download image",
+            },
+            502
+          );
+        }
+
+        const headers = new Headers(corsHeaders);
+
+        headers.set(
+          "Content-Type",
+          imageResponse.headers.get("Content-Type") ||
+            "image/jpeg"
+        );
+
+        headers.set(
+          "Content-Disposition",
+          'attachment; filename="DwwTik-image.jpg"'
+        );
+
+        return new Response(imageResponse.body, {
+          status: 200,
+          headers,
+        });
+      } catch (error) {
+        return json(
+          {
+            ok: false,
+            error: "Could not download image",
+          },
+          500
+        );
+      }
+    }
+
+    // =========================
+    // Endpoint not found
+    // =========================
     return json(
       {
         ok: false,
