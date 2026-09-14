@@ -65,7 +65,7 @@ export default {
       }
     }
 
-    // Download / extract TikTok video
+    // Download / extract TikTok or Instagram video
     if (
       url.pathname === "/api/download" &&
       request.method === "POST"
@@ -78,89 +78,95 @@ export default {
           return json(
             {
               ok: false,
-              error: "TikTok URL is required",
+              error: "Video URL is required",
             },
             400
           );
         }
-                // Handle Instagram
-                const isInstagram =
-                    /^https?:\/\/(www\.)?instagram\.com\//i.test(videoUrl);
 
-                if (isInstagram) {
-                    const apiResponse = await fetch(
-                        "https://api.saveapi.org/v1/download?url=" +
-                        encodeURIComponent(videoUrl),
-                        {
-                            method: "GET",
-                            headers: {
-                                "Authorization": `Bearer ${env.SAVEAPI_KEY}`,
-                            },
-                        }
-                    );
+        // =========================
+        // Instagram
+        // =========================
+        const isInstagram =
+          /^https?:\/\/(www\.)?instagram\.com\//i.test(videoUrl);
 
-                    if (!apiResponse.ok) {
-    const errorText = await apiResponse.text();
+        if (isInstagram) {
+          const apiResponse = await fetch(
+            "https://api.saveapi.org/v1/download?url=" +
+              encodeURIComponent(videoUrl),
+            {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${env.SAVEAPI_KEY}`,
+              },
+            }
+          );
 
-    return json(
-        {
-            ok: false,
-            error:
-                "SaveAPI error " +
-                apiResponse.status +
-                ": " +
-                errorText.slice(0, 300),
-        },
-        502
-    );
-}           
+          if (!apiResponse.ok) {
+            const errorText = await apiResponse.text();
 
-                    const result = await apiResponse.json();
+            return json(
+              {
+                ok: false,
+                error:
+                  "SaveAPI error " +
+                  apiResponse.status +
+                  ": " +
+                  errorText.slice(0, 300),
+              },
+              502
+            );
+          }
 
-                    if (
-                        !result.success ||
-                        !result.medias ||
-                        !result.medias.length
-                    ) {
-                        return json(
-                            {
-                                ok: false,
-                                error: "Could not extract Instagram video",
-                            },
-                            422
-                        );
-                    }
+          const result = await apiResponse.json();
 
-                    const media = result.medias.find(
-                        item => item.type === "video"
-                    );
+          if (
+            !result.success ||
+            !result.medias ||
+            !result.medias.length
+          ) {
+            return json(
+              {
+                ok: false,
+                error: "Could not extract Instagram video",
+              },
+              422
+            );
+          }
 
-                    if (!media || !media.url) {
-                        return json(
-                            {
-                                ok: false,
-                                error: "Instagram video not found",
-                            },
-                            422
-                        );
-                    }
+          const media = result.medias.find(
+            (item) => item.type === "video"
+          );
 
-                    return json({
-                        ok: true,
-                        video: {
-                            url: media.url,
-                            hd: media.url,
-                            watermark: null,
-                            watermarkSize: null,
-                            cover: null,
-                            title: result.meta?.title || "",
-                        },
-                        author: null,
-                        music: null,
-                        id: null,
-                    });
-                }
-        // Validate TikTok URL
+          if (!media || !media.url) {
+            return json(
+              {
+                ok: false,
+                error: "Instagram video not found",
+              },
+              422
+            );
+          }
+
+          return json({
+            ok: true,
+            video: {
+              url: media.url,
+              hd: media.url,
+              watermark: null,
+              watermarkSize: null,
+              cover: null,
+              title: result.meta?.title || "",
+            },
+            author: null,
+            music: null,
+            id: null,
+          });
+        }
+
+        // =========================
+        // TikTok
+        // =========================
         const isTikTok =
           /^https?:\/\/(www\.)?(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)\//i.test(
             videoUrl
@@ -175,46 +181,33 @@ export default {
             400
           );
         }
-let apiVideoUrl = videoUrl;
 
-try {
-    const inputUrl = new URL(videoUrl);
-
-    if (
-        inputUrl.hostname === "vt.tiktok.com" ||
-        inputUrl.hostname === "vm.tiktok.com"
-    ) {
-        const redirectResponse = await fetch(inputUrl, {
-            redirect: "follow",
-        });
-
-        if (redirectResponse.url) {
-            apiVideoUrl = redirectResponse.url;
-        }
-    }
-} catch (error) {
-    // Keep original URL if redirect resolution fails
-}
-        // Send URL to TikWM
+        // Send TikTok URL directly to AnyAPI
         const apiResponse = await fetch(
-          "https://www.tikwm.com/api/",
+          "https://api.getanyapi.com/v1/run/tiktok.video_download",
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              "Authorization": `Bearer ${env.ANYAPI_KEY}`,
+              "Content-Type": "application/json",
             },
-            body: new URLSearchParams({
-url: apiVideoUrl,
-              hd: "1",
+            body: JSON.stringify({
+              url: videoUrl,
             }),
           }
         );
 
         if (!apiResponse.ok) {
+          const errorText = await apiResponse.text();
+
           return json(
             {
               ok: false,
-              error: "Downloader service unavailable",
+              error:
+                "AnyAPI error " +
+                apiResponse.status +
+                ": " +
+                errorText.slice(0, 300),
             },
             502
           );
@@ -222,40 +215,46 @@ url: apiVideoUrl,
 
         const result = await apiResponse.json();
 
-        if (result.code !== 0 || !result.data) {
+        // AnyAPI normalized response
+        const output = result.output || result;
+        const data = output?.data;
+
+        // Photo posts / unavailable videos
+        if (!output?.found || !data) {
           return json(
             {
               ok: false,
-              error: result.msg || "Could not extract video",
+              error:
+                "No downloadable video found. TikTok photo posts are not supported yet.",
             },
             422
           );
         }
 
-        const data = result.data;
+        if (!data.videoUrl) {
+          return json(
+            {
+              ok: false,
+              error: "TikTok video URL was not found",
+            },
+            422
+          );
+        }
 
         return json({
           ok: true,
 
           video: {
-            url: data.play || null,
-            hd: data.hdplay || null,
-            watermark: data.wmplay || null,
-            watermarkSize: data.wm_size || null,
-            cover: data.cover || null,
-            title: data.title || "",
+            url: data.videoUrl || null,
+            hd: data.videoUrl || null,
+            watermark: data.watermarkedUrl || null,
+            watermarkSize: null,
+            cover: data.image || null,
+            title: "",
           },
 
-          author: data.author
-            ? {
-                username: data.author.unique_id || "",
-                nickname: data.author.nickname || "",
-                avatar: data.author.avatar || "",
-              }
-            : null,
-
-          music: data.music || null,
-
+          author: null,
+          music: null,
           id: data.id || null,
         });
       } catch (error) {
@@ -268,7 +267,10 @@ url: apiVideoUrl,
         );
       }
     }
+
+    // =========================
     // Download video file
+    // =========================
     if (url.pathname === "/api/file" && request.method === "GET") {
       try {
         const videoUrl = url.searchParams.get("url");
@@ -286,19 +288,17 @@ url: apiVideoUrl,
         const target = new URL(videoUrl);
 
         if (
-    !target.hostname.endsWith(".tiktokcdn.com") &&
-    !target.hostname.endsWith(".tiktokcdn-us.com") &&
-    !target.hostname.endsWith(".tikwm.com") &&
-    target.hostname !== "tikwm.com"
-          &&
-!target.hostname.endsWith(".tiktokv.us")
-          &&
-!target.hostname.endsWith(".cdninstagram.com")
-) {
+          !target.hostname.endsWith(".tiktokcdn.com") &&
+          !target.hostname.endsWith(".tiktokcdn-us.com") &&
+          !target.hostname.endsWith(".tikwm.com") &&
+          target.hostname !== "tikwm.com" &&
+          !target.hostname.endsWith(".tiktokv.us") &&
+          !target.hostname.endsWith(".cdninstagram.com")
+        ) {
           return json(
             {
               ok: false,
-error: "Invalid video source: " + target.hostname,
+              error: "Invalid video source: " + target.hostname,
             },
             400
           );
@@ -317,10 +317,12 @@ error: "Invalid video source: " + target.hostname,
         }
 
         const headers = new Headers(corsHeaders);
+
         headers.set(
           "Content-Type",
           videoResponse.headers.get("Content-Type") || "video/mp4"
         );
+
         headers.set(
           "Content-Disposition",
           'attachment; filename="DwwTik-video.mp4"'
@@ -340,6 +342,7 @@ error: "Invalid video source: " + target.hostname,
         );
       }
     }
+
     return json(
       {
         ok: false,
