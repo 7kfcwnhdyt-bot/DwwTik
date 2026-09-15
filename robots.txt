@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dwwtik.94jjsjbz6n.workers.dev/sitemap.xml
