@@ -2,933 +2,388 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>DwwTik — Download Videos</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DwwTik - TikTok &amp; Instagram Video Downloader</title>
+<meta name="description" content="Use DwwTik to try downloading supported TikTok and Instagram videos from a link. Find simple instructions, troubleshooting tips, and answers to common questions.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#08090c">
+<link rel="canonical" href="https://dwwtik.94jjsjbz6n.workers.dev/">
+<link rel="icon" href="data:,">
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-    --bg: #08090c;
-    --card: #111318;
-    --border: #242731;
-    --text: #ffffff;
-    --muted: #8d929e;
-    --green: #7cff9b;
-}
-
-body {
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    background:
-        radial-gradient(circle at 50% -10%, #18201b 0%, #0b0c10 42%, #08090c 75%);
-    color: var(--text);
-    padding: 24px 18px 50px;
-}
-
-.container {
-    width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
-}
-
-/* Header */
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 70px;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: -1px;
-}
-
-.logo span {
-    color: var(--green);
-}
-
-.status {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    color: #9297a2;
-    font-size: 13px;
-}
-
-.status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 10px rgba(124,255,155,.6);
-}
-
-/* Hero */
-
-.hero {
-    text-align: center;
-    margin-bottom: 34px;
-}
-
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 12px;
-    border: 1px solid #252a31;
-    border-radius: 999px;
-    background: rgba(255,255,255,.025);
-    color: #9ca1ac;
-    font-size: 12px;
-    margin-bottom: 20px;
-}
-
-.badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-}
-
-h1 {
-    font-size: clamp(38px, 8vw, 62px);
-    line-height: 1;
-    letter-spacing: -3px;
-    font-weight: 850;
-    margin-bottom: 17px;
-}
-
-h1 span {
-    color: var(--green);
-}
-
-.subtitle {
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* Platforms */
-
-.platforms {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-}
-
-.platform {
-    flex: 1;
-    height: 45px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: #0d0f13;
-    color: #8e939e;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.platform.active {
-    color: white;
-    border-color: #4b515d;
-    background: #171a20;
-}
-
-.platform.disabled {
-    opacity: .42;
-    cursor: default;
-}
-
-/* Main card */
-
-.card {
-    background: rgba(17,19,24,.92);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    padding: 22px;
-    box-shadow: 0 25px 80px rgba(0,0,0,.35);
-}
-
-/* Input */
-
-.input-wrap {
-    position: relative;
-}
-
-.input {
-    width: 100%;
-    height: 58px;
-    border: 1px solid #30343d;
-    border-radius: 14px;
-    background: #0b0d11;
-    color: white;
-    padding: 0 18px;
-    padding-right: 112px;
-    outline: none;
-    font-size: 15px;
-    transition: .2s;
-}
-
-.input:focus {
-    border-color: #666d78;
-}
-
-.input::placeholder {
-    color: #666b76;
-}
-
-.paste-btn {
-    position: absolute;
-    right: 7px;
-    top: 7px;
-    height: 44px;
-    padding: 0 15px;
-    border: 0;
-    border-radius: 10px;
-    background: #1a1d23;
-    color: #c8ccd3;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.paste-btn:active {
-    transform: scale(.97);
-}
-
-/* Download button */
-
-.download-btn {
-    width: 100%;
-    height: 58px;
-    margin-top: 12px;
-    border: 0;
-    border-radius: 14px;
-    background: white;
-    color: #090a0d;
-    font-size: 16px;
-    font-weight: 750;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.download-btn:hover {
-    transform: translateY(-1px);
-    opacity: .93;
-}
-
-.download-btn:disabled {
-    background: #272a31;
-    color: #686d77;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Result */
-
-.result {
-    display: none;
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
-}
-
-.result-title {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 7px;
-}
-
-.result-text {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.preview {
-    display: none;
-    width: 100%;
-    max-height: 430px;
-    object-fit: cover;
-    border-radius: 14px;
-    margin-bottom: 15px;
-}
-
-/* Download options */
-
-.options {
-    display: none;
-    gap: 9px;
-    margin-top: 15px;
-}
-
-.option-btn {
-    flex: 1;
-    height: 52px;
-    border-radius: 12px;
-    border: 1px solid #30343d;
-    background: #17191f;
-    color: white;
-    font-size: 14px;
-    font-weight: 650;
-    cursor: pointer;
-}
-
-.option-btn.primary {
-    background: white;
-    color: #090a0d;
-    border-color: white;
-}
-
-.option-btn:disabled {
-    opacity: .35;
-    cursor: not-allowed;
-}
-
-/* Footer */
-
-.footer {
-    text-align: center;
-    margin-top: 25px;
-    color: #555a65;
-    font-size: 12px;
-}
-
-.footer strong {
-    color: #777c86;
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-
-    body {
-        padding: 18px 14px 40px;
-    }
-
-    .header {
-        margin-bottom: 55px;
-    }
-
-    .status {
-        font-size: 11px;
-    }
-
-    h1 {
-        letter-spacing: -2px;
-    }
-
-    .subtitle {
-        font-size: 14px;
-    }
-
-    .card {
-        padding: 16px;
-        border-radius: 18px;
-    }
-
-    .platform {
-        font-size: 12px;
-    }
-
-    .options {
-        flex-direction: column;
-    }
-}
-    .mobile-bottom-ad {
-    display: none;
-}
-
-@media (max-width: 600px) {
-    .mobile-bottom-ad {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        min-height: 50px;
-        margin: 32px auto 24px;
-        overflow: hidden;
-    }
-}
-    .mobile-native-ad {
-    display: none;
-}
-
-@media (max-width: 600px) {
-    .mobile-native-ad {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin: 32px auto 24px;
-        overflow: hidden;
-    }
-}
-    .desktop-bottom-ad {
-    display: none;
-}
-
-@media (min-width: 601px) {
-    .desktop-bottom-ad {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        min-height: 90px;
-        margin: 32px auto 24px;
-        overflow: hidden;
-    }
-}
-.desktop-side-ad {
-    display: none;
-}
-.ipad-side-ad {
-    display: none;
-}
-
-@media (min-width: 601px) and (max-width: 1199px) {
-    .ipad-side-ad {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        width: 160px;
-        height: 300px;
-        position: fixed;
-        top: 310px;
-        left: 14px;
-        overflow: hidden;
-        z-index: 1000;
-    }
-}
-@media (min-width: 1060px) and (max-width: 1199px)
-    .ipad-side-ad {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        width: 160px;
-        height: 300px;
-        position: fixed;
-        top: 310px;
-left: calc(50% - 530px);
-        overflow: hidden;
-        z-index: 1000;
-    }
-}
-@media (min-width: 1200px) {
-    .desktop-side-ad {
-        display: flex !important;
-        justify-content: center;
-        align-items: flex-start;
-        width: 300px;
-        height: 250px;
-        position: fixed;
-        top: 310px;
-        left: 14px;
-        overflow: hidden;
-        z-index: 1000;
-    }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#08090c;--card:#111318;--border:#242731;--text:#fff;--muted:#a2a7b2;--green:#7cff9b}
+html{scroll-behavior:smooth}
+body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 50% -10%,#18201b 0%,#0b0c10 42%,#08090c 75%);color:var(--text);padding:24px 18px 24px;line-height:1.6}
+.container{width:100%;max-width:760px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:62px}
+.logo{font-size:25px;font-weight:800;letter-spacing:-1px;color:white;text-decoration:none}
+.logo span{color:var(--green)}
+.status{display:flex;align-items:center;gap:7px;color:#9297a2;font-size:13px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px rgba(124,255,155,.6)}
+.hero{text-align:center;margin-bottom:30px}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid #252a31;border-radius:999px;background:rgba(255,255,255,.025);color:#b0b5bf;font-size:12px;margin-bottom:20px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+h1{font-size:clamp(34px,7vw,54px);line-height:1.08;letter-spacing:-2px;font-weight:850;margin-bottom:17px}
+h1 span{color:var(--green)}
+.subtitle{color:var(--muted);font-size:16px;line-height:1.7;max-width:590px;margin:auto}
+.platforms{display:flex;gap:8px;margin-bottom:14px}
+.platform{flex:1;min-height:45px;border:1px solid var(--border);border-radius:12px;background:#0d0f13;color:#aeb3bd;font-size:14px;font-weight:600;cursor:pointer}
+.platform.active{color:white;border-color:#4b515d;background:#171a20}
+.platform.disabled{opacity:.42;cursor:not-allowed}
+.card{background:rgba(17,19,24,.92);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 25px 80px rgba(0,0,0,.35)}
+.input-wrap{position:relative}
+.input{width:100%;height:58px;border:1px solid #30343d;border-radius:14px;background:#0b0d11;color:white;padding:0 112px 0 18px;outline:none;font-size:15px;transition:border-color .2s}
+.input:focus{border-color:#858d9b}
+.input::placeholder{color:#777d89}
+.paste-btn{position:absolute;right:7px;top:7px;height:44px;padding:0 15px;border:0;border-radius:10px;background:#1a1d23;color:#e0e3e8;font-weight:600;cursor:pointer}
+.download-btn{width:100%;min-height:58px;margin-top:12px;border:0;border-radius:14px;background:white;color:#090a0d;font-size:16px;font-weight:750;cursor:pointer;transition:opacity .2s}
+.download-btn:hover{opacity:.92}
+.download-btn:disabled{background:#272a31;color:#858a94;cursor:wait}
+.result{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.result-title{font-size:14px;font-weight:700;margin-bottom:7px}
+.result-text{color:var(--muted);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.preview{display:none;width:100%;max-height:430px;object-fit:contain;border-radius:14px;margin-bottom:15px}
+.options{display:none;gap:9px;margin-top:15px}
+.option-btn{flex:1;min-height:52px;border-radius:12px;border:1px solid #30343d;background:#17191f;color:white;font-size:14px;font-weight:650;cursor:pointer;padding:10px}
+.option-btn.primary{background:white;color:#090a0d;border-color:white}
+.option-btn:disabled{opacity:.45;cursor:not-allowed}
+.content-section{margin-top:42px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)}
+.content-section h2{font-size:24px;letter-spacing:-.6px;margin-bottom:12px}
+.content-section h3{font-size:16px;margin:20px 0 6px}
+.content-section p,.content-section li{color:#b0b5bf;font-size:14px;line-height:1.8}
+.content-section ol,.content-section ul{padding-left:22px;margin-top:10px}
+.faq-item{padding:15px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.faq-item h3{margin:0 0 6px}
+.faq-item p{margin:0}
+.notice{border:1px solid #30343d;border-radius:12px;padding:13px 15px;margin-top:14px;color:#b0b5bf;font-size:13px;line-height:1.7}
+.footer{margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);text-align:center;color:#8d929e;font-size:12px}
+.footer strong{color:#d0d4dc}
+.footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin-top:10px}
+.footer a{color:#aeb4bf;text-decoration:none}
+.footer a:hover{color:var(--green)}
+.mobile-bottom-ad{display:none}
+@media(max-width:600px){
+ body{padding:18px 14px 24px}
+ .header{margin-bottom:45px}
+ .status{font-size:11px}
+ h1{letter-spacing:-1.5px}
+ .subtitle{font-size:14px}
+ .card{padding:16px;border-radius:18px}
+ .platform{font-size:12px}
+ .options{flex-direction:column}
+ .content-section{margin-top:34px;padding-top:24px}
+ .content-section h2{font-size:22px}
+ .mobile-bottom-ad{display:flex;justify-content:center;align-items:center;width:100%;min-height:50px;margin:28px auto 10px;overflow:hidden}
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
+<header class="header">
+ <a class="logo" href="/" aria-label="DwwTik home">Dww<span>Tik</span></a>
+ <div class="status"><span class="status-dot" aria-hidden="true"></span><span>Video tools</span></div>
+</header>
 
-    <header class="header">
-        <div class="logo">Dww<span>Tik</span></div>
+<main>
+<section class="hero" aria-labelledby="page-title">
+ <div class="badge"><span class="badge-dot" aria-hidden="true"></span>Simple link-based video tool</div>
+ <h1 id="page-title">TikTok &amp; Instagram<br><span>Video Downloader</span></h1>
+ <p class="subtitle">Paste a supported video link, choose its platform, and try downloading the video when it is available. Results can depend on the original post and the download service.</p>
+</section>
 
-        <div class="status">
-            <div class="status-dot"></div>
-            Online
-        </div>
-    </header>
-
-    <section class="hero">
-
-        <div class="badge">
-            <div class="badge-dot"></div>
-            Fast & simple video downloader
-        </div>
-
-        <h1>Download.<br><span>Without limits.</span></h1>
-
-        <p class="subtitle">
-            Paste a video link and download it in seconds.
-        </p>
-
-    </section>
-
-
-    <div class="platforms">
-
-        <button id="tiktokButton" class="platform active" type="button">
-            TikTok
-        </button>
-
-<button id="instagramButton" class="platform" type="button">
-            Instagram
-        </button>
-
-        <button class="platform disabled" type="button">
-            X
-        </button>
-
-    </div>
-
-    <section class="card">
-
-        <div class="input-wrap">
-
-            <input
-                id="urlInput"
-                class="input"
-                type="url"
-                placeholder="Paste TikTok link here..."
-                autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false"
-            >
-
-            <button
-                id="pasteButton"
-                class="paste-btn"
-                type="button"
-            >
-                Paste
-            </button>
-
-        </div>
-
-        <button
-            id="downloadButton"
-            class="download-btn"
-            type="button"
-        >
-            Download video
-        </button>
-
-        <div id="result" class="result">
-
-            <img
-                id="videoPreview"
-                class="preview"
-                alt="Video preview"
-            >
-
-            <div id="resultTitle" class="result-title">
-                Ready
-            </div>
-
-            <div id="resultText" class="result-text">
-                Processing...
-            </div>
-
-            <div id="options" class="options">
-
-                <button
-                    id="noWatermarkButton"
-                    class="option-btn primary"
-                    type="button"
-                >
-                    Download without watermark
-                </button>
-
-                <button
-                    id="watermarkButton"
-                    class="option-btn"
-                    type="button"
-                    disabled
-                >
-                    With watermark
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-<div class="mobile-native-ad">
-    <script async="async" data-cfasync="false" src="https://pl31316877.profitableratecpmnetwork.com/e54f9a2cbe126777cf825cb467684f8c/invoke.js"></script>
-    <div id="container-e54f9a2cbe126777cf825cb467684f8c"></div>
+<div class="platforms" aria-label="Choose a platform">
+ <button id="tiktokButton" class="platform active" type="button" aria-pressed="true">TikTok</button>
+ <button id="instagramButton" class="platform" type="button" aria-pressed="false">Instagram</button>
+ <button class="platform disabled" type="button" aria-disabled="true" title="Not available yet">X (coming later)</button>
 </div>
-    <div class="footer">
-        <strong>DwwTik</strong> · Simple. Fast. Clean.
-    </div>
 
+<section class="card" aria-label="Video download tool">
+ <div class="input-wrap">
+  <label for="urlInput" class="visually-hidden" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Video URL</label>
+  <input id="urlInput" class="input" type="url" placeholder="Paste a TikTok link here..." autocomplete="off" autocapitalize="off" spellcheck="false">
+  <button id="pasteButton" class="paste-btn" type="button">Paste</button>
+ </div>
+ <button id="downloadButton" class="download-btn" type="button">Find video</button>
+ <div id="result" class="result" role="status" aria-live="polite">
+  <img id="videoPreview" class="preview" alt="Video preview">
+  <div id="resultTitle" class="result-title">Ready</div>
+  <div id="resultText" class="result-text">Paste a supported video link to get started.</div>
+  <div id="options" class="options">
+   <button id="noWatermarkButton" class="option-btn primary" type="button">Download video</button>
+   <button id="watermarkButton" class="option-btn" type="button" disabled>With watermark</button>
+  </div>
+ </div>
+</section>
+
+<section class="content-section" aria-labelledby="how-title">
+ <h2 id="how-title">How to use DwwTik</h2>
+ <p>Use the tool to submit a link to a supported TikTok or Instagram post. The steps are simple:</p>
+ <ol>
+  <li>Open the TikTok or Instagram post you want to access and copy its link.</li>
+  <li>Select the matching platform above, then paste the link into the input field.</li>
+  <li>Select <strong>Find video</strong>. If the service returns a downloadable video, use the download option shown on the page.</li>
+ </ol>
+ <p class="notice">Only download content you have permission to save. Respect creators’ rights and the platform’s terms. DwwTik is an independent tool and is not affiliated with or endorsed by TikTok or Instagram.</p>
+</section>
+
+<section class="content-section" aria-labelledby="supported-title">
+ <h2 id="supported-title">Supported links and limitations</h2>
+ <p>DwwTik currently offers link processing for supported TikTok and Instagram video posts. A link may not work if the post is private, removed, region-restricted, unavailable to the processing service, or otherwise unsupported. Availability can also change when a third-party service changes its systems or limits.</p>
+ <p>DwwTik cannot guarantee that every link will be processed, that every video quality will be available, or that a download will always succeed.</p>
+</section>
+
+<section class="content-section" aria-labelledby="trouble-title">
+ <h2 id="trouble-title">Troubleshooting</h2>
+ <h3>Check the link</h3>
+ <p>Copy the link again from the original post and make sure you selected the matching platform. Remove any extra text before or after the URL.</p>
+ <h3>If the video cannot be processed</h3>
+ <p>Confirm that the post is still available and accessible to you. Private, deleted, restricted, or unsupported posts may not work. You can try again later if the service is temporarily unavailable or has reached a request limit.</p>
+ <h3>If the download does not start</h3>
+ <p>Check your browser’s download prompt and connection. If it still fails, reload the page and try once more. Repeated attempts may not help when the external service is unavailable.</p>
+</section>
+
+<section class="content-section" aria-labelledby="faq-title">
+ <h2 id="faq-title">Frequently asked questions</h2>
+ <div class="faq-item">
+  <h3>How do I try downloading a TikTok video?</h3>
+  <p>Copy the TikTok post link, select TikTok in DwwTik, paste the link, and select Find video. If a downloadable file is returned, choose the download option.</p>
+ </div>
+ <div class="faq-item">
+  <h3>Can I download any Instagram video?</h3>
+  <p>No. Only supported links may work. Private, removed, restricted, or unsupported posts might not be available to the tool.</p>
+ </div>
+ <div class="faq-item">
+  <h3>Can I download a private video?</h3>
+  <p>DwwTik is not designed to bypass privacy settings or access controls. Only use links and content you are authorized to access.</p>
+ </div>
+ <div class="faq-item">
+  <h3>Why did my link fail?</h3>
+  <p>The link may be incorrect, the post may be unavailable, or the external processing service may be temporarily limited or unable to handle that post. Check the URL and try again later.</p>
+ </div>
+ <div class="faq-item">
+  <h3>Does DwwTik guarantee watermark-free downloads?</h3>
+  <p>No. Available file options depend on what the processing service returns for a particular post. DwwTik cannot guarantee that a watermark-free file will be available.</p>
+ </div>
+ <div class="faq-item">
+  <h3>Does DwwTik store my video or link?</h3>
+  <p>The link you submit is sent to the site’s processing service so it can attempt to retrieve video information. The site may also rely on hosting and third-party providers that process technical request data. See the Privacy Policy for more information; do not submit sensitive or private links.</p>
+ </div>
+</section>
+
+<section class="content-section" aria-labelledby="about-title">
+ <h2 id="about-title">About DwwTik</h2>
+ <p>DwwTik is a simple web tool for trying to process supported TikTok and Instagram video links in one place. It provides a link input, platform selection, and download options when a compatible result is available. It does not host a catalogue of posts, and successful processing is not guaranteed.</p>
+ <p>Use the tool responsibly and make sure you have the necessary rights or permission before saving or sharing someone else’s content.</p>
+</section>
+</main>
+
+<div class="footer">
+ <strong>DwwTik</strong> · A simple link-based video tool.
+ <div class="footer-links">
+  <a href="/privacy.html">Privacy Policy</a>
+  <a href="/terms.html">Terms of Use</a>
+  <a href="/contact.html">Contact</a>
+ </div>
+ <p style="margin-top:12px">TikTok and Instagram are trademarks of their respective owners. DwwTik is independent and is not affiliated with either platform.</p>
+</div>
+
+<!-- The only ad slot retained: 320 × 50 on mobile. -->
+<div class="mobile-bottom-ad" aria-label="Advertisement">
+ <script>
+  atOptions = {
+   'key' : '63af86ae2d47262c503b86bcfaed337c',
+   'format' : 'iframe',
+   'height' : 50,
+   'width' : 320,
+   'params' : {}
+  };
+ </script>
+ <script src="https://www.highrevenueformat.com/63af86ae2d47262c503b86bcfaed337c/invoke.js"></script>
+</div>
 </div>
 
 <script>
-
 const urlInput = document.getElementById("urlInput");
 const pasteButton = document.getElementById("pasteButton");
 const downloadButton = document.getElementById("downloadButton");
 const instagramButton = document.getElementById("instagramButton");
-    const tiktokButton = document.getElementById("tiktokButton");
+const tiktokButton = document.getElementById("tiktokButton");
 const result = document.getElementById("result");
 const resultTitle = document.getElementById("resultTitle");
 const resultText = document.getElementById("resultText");
-
 const videoPreview = document.getElementById("videoPreview");
 const options = document.getElementById("options");
-const noWatermarkButton =
-    document.getElementById("noWatermarkButton");
-    const watermarkButton =
-    document.getElementById("watermarkButton");
+const noWatermarkButton = document.getElementById("noWatermarkButton");
+const watermarkButton = document.getElementById("watermarkButton");
 let lastRequestAt = 0;
-instagramButton.addEventListener("click", function () {
-    document.querySelector(".platform.active").classList.remove("active");
-    instagramButton.classList.add("active");
+let selectedPlatform = "tiktok";
+let currentVideoData = null;
 
-    urlInput.placeholder = "Paste Instagram link here...";
-    
-    watermarkButton.style.display = "none";
-});
-    tiktokButton.addEventListener("click", function () {
-    document
-        .querySelector(".platform.active")
-        .classList.remove("active");
+function showMessage(title, message) {
+ result.style.display = "block";
+ resultTitle.textContent = title;
+ resultText.textContent = message;
+ options.style.display = "none";
+ videoPreview.style.display = "none";
+}
 
-    tiktokButton.classList.add("active");
+function selectPlatform(platform) {
+ selectedPlatform = platform;
+ tiktokButton.classList.toggle("active", platform === "tiktok");
+ instagramButton.classList.toggle("active", platform === "instagram");
+ tiktokButton.setAttribute("aria-pressed", String(platform === "tiktok"));
+ instagramButton.setAttribute("aria-pressed", String(platform === "instagram"));
+ urlInput.placeholder = platform === "tiktok" ? "Paste a TikTok link here..." : "Paste an Instagram link here...";
+ watermarkButton.style.display = platform === "instagram" ? "none" : "";
+ showMessage("Ready", "Paste a supported " + (platform === "tiktok" ? "TikTok" : "Instagram") + " link to get started.");
+}
 
-    urlInput.placeholder = "Paste a TikTok link here...";
-
-    watermarkButton.style.display = "";
-});
-/* Paste */
+instagramButton.addEventListener("click", () => selectPlatform("instagram"));
+tiktokButton.addEventListener("click", () => selectPlatform("tiktok"));
 
 pasteButton.addEventListener("click", async function () {
-
-    try {
-
-        const text = await navigator.clipboard.readText();
-
-        if (!text) {
-            result.style.display = "block";
-            resultTitle.textContent = "Nothing to paste";
-            resultText.textContent = "Copy a TikTok link first.";
-            return;
-        }
-
-        urlInput.value = text;
-
-        result.style.display = "none";
-
-    } catch {
-
-        urlInput.focus();
-
-    }
-
+ try {
+  const copiedText = await navigator.clipboard.readText();
+  if (!copiedText) {
+   showMessage("Nothing to paste", "Copy a video link first, then try again.");
+   return;
+  }
+  urlInput.value = copiedText.trim();
+  result.style.display = "none";
+ } catch (error) {
+  urlInput.focus();
+  showMessage("Paste unavailable", "Your browser did not allow clipboard access. Tap the field and paste the link manually.");
+ }
 });
-
-
-/* Download / Process */
 
 downloadButton.addEventListener("click", processVideo);
 
+function isSupportedHost(hostname, platform) {
+ const host = hostname.toLowerCase().replace(/^www\./, "");
+ if (platform === "tiktok") {
+  return host === "tiktok.com" || host.endsWith(".tiktok.com");
+ }
+ return host === "instagram.com" || host.endsWith(".instagram.com");
+}
 
 async function processVideo() {
+ const url = urlInput.value.trim();
+ if (!url) {
+  showMessage("Link required", "Paste a " + (selectedPlatform === "tiktok" ? "TikTok" : "Instagram") + " link first.");
+  return;
+ }
 
-    const url = urlInput.value.trim();
+ let parsedUrl;
+ try {
+  parsedUrl = new URL(url);
+ } catch (error) {
+  showMessage("Invalid link", "Enter a complete link beginning with https://.");
+  return;
+ }
 
-    if (!url) {
+ if (!["https:", "http:"].includes(parsedUrl.protocol) || !isSupportedHost(parsedUrl.hostname, selectedPlatform)) {
+  showMessage("Check the platform and link", "Select " + (selectedPlatform === "tiktok" ? "TikTok and enter a TikTok link." : "Instagram and enter an Instagram link."));
+  return;
+ }
 
-        result.style.display = "block";
-        resultTitle.textContent = "Link required";
-        resultText.textContent = "Please paste a TikTok link first.";
+ result.style.display = "block";
+ options.style.display = "none";
+ videoPreview.style.display = "none";
+ currentVideoData = null;
+ resultTitle.textContent = "Checking link...";
+ resultText.textContent = "Please wait while the link is processed.";
+ downloadButton.disabled = true;
+ downloadButton.textContent = "Checking link...";
 
-        return;
-    }
+ try {
+  const now = Date.now();
+  const wait = 1000 - (now - lastRequestAt);
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  lastRequestAt = Date.now();
 
+  const response = await fetch("/api/download", {
+   method: "POST",
+   headers: {"Content-Type": "application/json"},
+   body: JSON.stringify({url})
+  });
 
-    try {
+  let data;
+  try {
+   data = await response.json();
+  } catch (error) {
+   throw new Error("The service returned an unreadable response.");
+  }
 
-        const parsedUrl = new URL(url);
+  if (!response.ok || !data || !data.ok) {
+   const error = String(data && data.error ? data.error : "");
+   resultTitle.textContent = "Couldn't process link";
+   if (error.toLowerCase().includes("free api limit") || error.toLowerCase().includes("rate limit")) {
+    resultText.textContent = "The processing service may be temporarily limited. Please wait and try again later.";
+   } else if (/video not found|could not extract|not found/i.test(error)) {
+    resultText.textContent = "This video could not be found or processed. Check that the post is still available.";
+   } else if (/private/i.test(error)) {
+    resultText.textContent = "This post may be private or unavailable to the processing service.";
+   } else if (/invalid|parsing/i.test(error)) {
+    resultText.textContent = "Check the link and selected platform, then try again.";
+   } else {
+    resultText.textContent = error || "The service could not process this link. Please try again later.";
+   }
+   return;
+  }
 
-        const validTikTok =
-    parsedUrl.hostname === "tiktok.com" ||
-    parsedUrl.hostname.endsWith(".tiktok.com");
+  const videoUrl = data.video && (data.video.hd || data.video.url);
+  if (!videoUrl) {
+   showMessage("Video not found", "The service did not return a downloadable video for this link.");
+   return;
+  }
 
-const validInstagram =
-    parsedUrl.hostname === "instagram.com" ||
-    parsedUrl.hostname.endsWith(".instagram.com");
-
-if (!validTikTok && !validInstagram) {
-
-            return;
-        }
-
-    } catch {
-
-        result.style.display = "block";
-        resultTitle.textContent = "Invalid link";
-        resultText.textContent =
-            "Please enter a valid TikTok URL.";
-
-        return;
-    }
-
-
-    result.style.display = "block";
-    options.style.display = "none";
-    videoPreview.style.display = "none";
-
-    resultTitle.textContent = "Checking link...";
-    resultText.textContent = "Please wait a moment.";
-
-downloadButton.disabled = true;
-downloadButton.textContent = "Checking link...";
-
-
-    try {
-const now = Date.now();
-const wait = 1000 - (now - lastRequestAt);
-
-if (wait > 0) {
-    await new Promise(resolve => setTimeout(resolve, wait));
+  currentVideoData = data.video;
+  if (data.video.cover) {
+   videoPreview.src = data.video.cover;
+   videoPreview.style.display = "block";
+   videoPreview.onerror = () => { videoPreview.style.display = "none"; };
+  }
+  resultTitle.textContent = "Video ready";
+  resultText.textContent = data.video.title || "A downloadable file may be available for this post.";
+  options.style.display = "flex";
+  noWatermarkButton.disabled = false;
+  watermarkButton.disabled = false;
+  watermarkButton.style.display = selectedPlatform === "instagram" ? "none" : "";
+ } catch (error) {
+  resultTitle.textContent = "Connection error";
+  resultText.textContent = "The service could not be reached or returned an unexpected response. Check your connection and try again.";
+ } finally {
+  downloadButton.disabled = false;
+  downloadButton.textContent = "Find video";
+ }
 }
 
-lastRequestAt = Date.now();
-        const response = await fetch("/api/download", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                url: url
-            })
-
-        });
-
-
-        const data = await response.json();
-
-
-        if (!response.ok || !data.ok) {
-
-downloadButton.disabled = false;
-downloadButton.textContent = "Download video";
-            
-    resultTitle.textContent = "Couldn't process link";
-
-    const error = data.error || "";
-
-    if (error.includes("Free Api Limit")) {
-
-        resultText.textContent =
-            "Please wait a moment and try again.";
-
-    } else if (
-        error.includes("video not found") ||
-        error.includes("Video not found") ||
-        error.includes("Could not extract")
-    ) {
-
-        resultText.textContent =
-            "This video couldn't be found or processed.";
-
-    } else if (
-        error.includes("private") ||
-        error.includes("Private")
-    ) {
-
-        resultText.textContent =
-            "This video is private and can't be downloaded.";
-
-    } else if (
-        error.includes("invalid") ||
-        error.includes("Invalid") ||
-        error.includes("parsing")
-    ) {
-
-        resultText.textContent =
-            "Please check the link and try again.";
-
-    } else {
-
-resultText.textContent =
-    error || "Unknown error";
-    }
-
-    return;
+function startDownload(fileUrl, filename, button) {
+ if (!fileUrl) {
+  resultText.textContent = "This download option is not available for the current video.";
+  return;
+ }
+ button.disabled = true;
+ resultText.textContent = "Preparing your download...";
+ const link = document.createElement("a");
+ link.href = "/api/file?url=" + encodeURIComponent(fileUrl);
+ link.download = filename;
+ link.rel = "noopener";
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ resultText.textContent = "Download requested. Check your browser's download prompt.";
+ window.setTimeout(() => { button.disabled = false; }, 2000);
 }
 
-
-        const videoUrl =
-            data.video?.hd ||
-            data.video?.url;
-
-
-        if (!videoUrl) {
-
-            resultTitle.textContent = "Video not found";
-            resultText.textContent =
-                "No downloadable video was returned.";
-
-            return;
-        }
-
-
-        /* Preview */
-
-        if (data.video?.cover) {
-
-            videoPreview.src = data.video.cover;
-            videoPreview.style.display = "block";
-
-        }
-
-
-        resultTitle.textContent = "Video ready ✓";
-        resultText.textContent =
-            data.video?.title ||
-            "Your video is ready to download.";
-
-        options.style.display = "flex";
-
-downloadButton.disabled = false;
-downloadButton.textContent = "Download video";
-watermarkButton.disabled = false;
-
-        /* Download */
-
-        noWatermarkButton.onclick = function () {
-noWatermarkButton.disabled = true;
-            resultText.textContent =
-                "Preparing your download...";
-
-            const link = document.createElement("a");
-
-            link.href =
-                "/api/file?url=" +
-                encodeURIComponent(videoUrl);
-
-            link.download = "DwwTik-video.mp4";
-
-            document.body.appendChild(link);
-
-            link.click();
-            setTimeout(() => {
-    noWatermarkButton.disabled = false;
-}, 2000);
-
-            link.remove();
-
-            resultText.textContent =
-                "Download started ✓";
-
-        };
-watermarkButton.onclick = function () {
-    watermarkButton.disabled = true;
-    resultText.textContent = "Preparing your download...";
-
-    const watermarkUrl = data.video?.watermark;
-
-if (!watermarkUrl) {
-    resultText.textContent =
-        "Watermark video is not available.";
-
-    watermarkButton.disabled = false;
-
-    return;
-}
-    
-    const link = document.createElement("a");
-
-link.href =
-    "/api/file?url=" +
-    encodeURIComponent(watermarkUrl);
-
-    link.download = "DwwTik-video-watermark.mp4";
-
-    document.body.appendChild(link);
-
-    link.click();
-    setTimeout(() => {
-    watermarkButton.disabled = false;
-}, 2000);
-
-    link.remove();
-
-    resultText.textContent =
-        "Download started ✓";
-};
-
-    } catch (error) {
-
-        resultTitle.textContent = "Connection error";
-        resultText.textContent =
-            "Please check your connection and try again.";
-downloadButton.disabled = false;
-downloadButton.textContent = "Download video";
-    }
-
-}
-
+noWatermarkButton.addEventListener("click", function () {
+ const fileUrl = currentVideoData && (currentVideoData.hd || currentVideoData.url);
+ startDownload(fileUrl, "DwwTik-video.mp4", noWatermarkButton);
+});
+watermarkButton.addEventListener("click", function () {
+ const fileUrl = currentVideoData && currentVideoData.watermark;
+ startDownload(fileUrl, "DwwTik-video-watermark.mp4", watermarkButton);
+});
 </script>
-    <div class="mobile-bottom-ad">
-<script>
-  atOptions = {
-    'key' : '63af86ae2d47262c503b86bcfaed337c',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highrevenueformat.com/63af86ae2d47262c503b86bcfaed337c/invoke.js"></script>
-</div>
-    
-    <script src="https://pl31318105.profitableratecpmnetwork.com/06/5e/2d/065e2db9d4e635d6999f742c1a1b400f.js"></script>
-
-<div class="desktop-side-ad">
-    <script>
-        atOptions = {
-            'key' : '24af60b81c61b2fd8bec2884db95c5bb',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-        };
-    </script>
-    <script src="https://www.highrevenueformat.com/24af60b81c61b2fd8bec2884db95c5bb/invoke.js"></script>
-</div>
-<div class="ipad-side-ad">
-    <script>
-        atOptions = {
-            'key' : '9f02529fb7f93ee78736cc6fd451601d',
-            'format' : 'iframe',
-            'height' : 300,
-            'width' : 160,
-            'params' : {}
-        };
-    </script>
-    <script src="https://www.highrevenueformat.com/9f02529fb7f93ee78736cc6fd451601d/invoke.js"></script>
-</div>
-<div class="desktop-bottom-ad">
-    <script>
-        atOptions = {
-            'key' : 'f27ee6ac10c4cc9e86f56a980f4ab073',
-            'format' : 'iframe',
-            'height' : 90,
-            'width' : 728,
-            'params' : {}
-        };
-    </script>
-    <script src="https://www.highrevenueformat.com/f27ee6ac10c4cc9e86f56a980f4ab073/invoke.js"></script>
-</div>
-
 </body>
 </html>
